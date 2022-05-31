@@ -1,5 +1,16 @@
 .square {
-  height: 100px;
-  width: 100px;
+  height: 150px;
+  width: 150px;
   border: 2px solid black;
+  font-size: 100px;
+  text-align: center;
+}
+.game-board {   
+  display: flex; 
+  flex-wrap: wrap;
+  margin: 0 auto;
+  width: 465px;
+
+
+  
 }
