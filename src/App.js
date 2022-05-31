@@ -9,12 +9,31 @@ class App extends Component {
       squares: [null, null, null, null, null, null, null, null, null]
     }
   }
-
+    handleGamePlay = (index) => {
+      const {squares} = this.state
+      
+      squares[index] = "⭕️"
+      this.setState({squares: squares})
+    }
   render() {
+    console.log(this.state.squares)
     return(
       <>
         <h1>Tic Tac Toe</h1>
-        <Square />
+        <div className='game-board'> 
+
+        
+        {this.state.squares.map((value, index) => {
+          return (
+            <Square 
+            value = {value}
+            key = {index}
+            index = {index}
+            handleGamePlay = {this.handleGamePlay}
+            /> 
+          )
+        })}
+        </div>
       </>
     )
   }
