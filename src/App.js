@@ -6,17 +6,29 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      squares: [null, null, null, null, null, null, null, null, null]
+      squares: [null, null, null, null, null, null, null, null, null],
+      turn: [0]
     }
   }
-    handleGamePlay = (index) => {
-      const {squares} = this.state
+    
+
+
+    handleGamePlay = (index, whoseTurn) => {
+      const {squares, turn} = this.state
+      turn[0] = whoseTurn[0] + 1
+      if(turn[0] %2 !== 0) {
+        squares[index] = "⭕️"
+        this.setState({squares: squares, turn: turn})
+      } else {
+        squares[index] = "❌"
+        this.setState({squares: squares, turn: turn})
+      }
       
-      squares[index] = "⭕️"
-      this.setState({squares: squares})
+      
     }
   render() {
-    console.log(this.state.squares)
+    console.log("square:", this.state.squares)
+    console.log("turn:", this.state.turn)
     return(
       <>
         <h1>Tic Tac Toe</h1>
@@ -30,6 +42,7 @@ class App extends Component {
             key = {index}
             index = {index}
             handleGamePlay = {this.handleGamePlay}
+            turn = {this.state.turn}
             /> 
           )
         })}
