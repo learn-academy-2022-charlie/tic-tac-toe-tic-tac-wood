@@ -10,45 +10,47 @@ class App extends Component {
     this.state = {
       squares: [null, null, null, null, null, null, null, null, null],
       turn: true,
-     
       emojis: ["⭕️", "❌", "🐈‍⬛", "🐕", "🌭", "🍔" ],
       emojiOrder: 0,
       playerOne: null,
       playerTwo: null,
-      gameEnd: false,
-      winner: null,          
+      gameEnd: false,           
     }
   }
- 
-  winCheck = (squareArr) => {
-      
-    const lines = [
-      [0, 1, 2],
-      [3, 4, 5],
-      [6, 7, 8],
-      [0, 3, 6],
-      [1, 4, 7],
-      [2, 5, 8],
-      [0, 4, 8],
-      [2, 4, 6],
-    ];
-    let {winner, gameEnd}=this.state
-    for (let i = 0; i < lines.length; i++) {
-      const [a, b, c] = lines[i];
-      if (squareArr[a] && squareArr[a] === squareArr[b] && squareArr[a] === squareArr[c]) {
-           winner = `${squareArr[a]} is the winner!`
-           gameEnd = true
-      } else if(squareArr.indexOf(null) === -1) {
-           winner = "Stalemate!"
-           gameEnd = true
-        
+
+    gameOver = () => {
+      let {gameEnd}  = this.state
+      if (gameEnd === false){
+          this.setState({gameEnd: true})
       }
-        
     }
-    return winner
-  }
-  
-    
+ 
+    winCheck = (squareArr) => {
+        
+      const lines = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6],
+      ];
+      let winner=null
+      for (let i = 0; i < lines.length; i++) {
+        const [a, b, c] = lines[i];
+        if (squareArr[a] && squareArr[a] === squareArr[b] && squareArr[a] === squareArr[c]) {
+            winner = `${squareArr[a]} is the winner!`
+            this.gameOver()       
+        } else if(squareArr.indexOf(null) === -1) {
+            winner = "Stalemate!"
+            this.gameOver()
+        }       
+      }    
+      return winner
+    }
+
     playerCheck = (emojiIndex) => {
         let {emojis, emojiOrder} = this.state
         if (emojiOrder === 0){
@@ -64,11 +66,10 @@ class App extends Component {
     handleGamePlay = (index) => {
       const {squares, turn, playerOne, playerTwo, gameEnd} = this.state  
       
-      if (gameEnd === true){
+      if (gameEnd === true){       
         alert("Please reset the game!")
-      }
-
-      if(playerOne === null || playerTwo === null) {
+        squares[index] = "RESET"
+      } else if(playerOne === null || playerTwo === null) {
         alert("Please pick players ")
       } else if (squares[index] !== null) {
         void(0)
@@ -87,50 +88,49 @@ class App extends Component {
         {
           squares:[null, null, null, null, null, null, null, null, null],
           turn: true,
-          
           emojiOrder: 0,
           playerOne: null,
-          playerTwo: null  
+          playerTwo: null,
+          gameEnd: false
         }
       )
     }
   
 
   render() {
-    console.log("square:", this.state.squares)
-    // console.log("turn:", this.state.turn)
-    // console.log("playA:", this.state.playA)
-    // console.log("playB:", this.state.playB)
-    // console.log("win:", this.state.whoWon)
-    console.log(this.state.turnCount)
+
 
     return(
       <>
-        <h1>Tic Tac Toe</h1>
-        <div className = "playerId">
-          <div>P1 {this.state.playerOne}</div>
-          <div>P2 {this.state.playerTwo}</div>
-        </div>
-        <div>
-          <button onClick={this.restart}>
-            RESET
-          </button>
-        </div>
-        <div className='game-board'> 
-        {this.state.squares.map((value, index) => {
-          return (
-            <Square 
-            value = {value}
-            key = {index}
-            index = {index}
-            handleGamePlay = {this.handleGamePlay}
-            turn = {this.state.turn}
-            turnCount = {this.state.turnCount}
-            /> 
-          )
-        })}
-        </div>
-       
+      <div className = "flexParent">
+        <div className ="flex1">
+          <div className = "playerId">
+            <div>P1 {this.state.playerOne}</div>
+            <div>P2 {this.state.playerTwo}</div>
+          </div>
+          <div className = "resetButton">
+            <button onClick={this.restart}>
+              RESET
+            </button>
+          </div>
+        </div>  
+
+        <div className ="flex2">
+          <h1>Tic Tac Toe</h1>
+          <div className='game-board'> 
+          {this.state.squares.map((value, index) => {
+            return (
+              <Square 
+              value = {value}
+              key = {index}
+              index = {index}
+              handleGamePlay = {this.handleGamePlay}
+              /> 
+            )
+          })}
+          </div>
+        </div>  
+        
         <div className = "players">
             {this.state.emojis.map((value, index) => {
               return (
@@ -145,14 +145,17 @@ class App extends Component {
             
         </div>
         
+      </div>    
+      
         <div className = "winnerBox">
           <div className = "winner">
-            {/* <Winner
+            <Winner
             squares={this.state.squares}
             winChecker = {this.winCheck}
             winner= {this.state.winner}
-            /> */}
-            {this.winCheck(this.state.squares)}
+            gameOver = {this.gameOver}
+            />
+            
           </div> 
         </div>
       </>
