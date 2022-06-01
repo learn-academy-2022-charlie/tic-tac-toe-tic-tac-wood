@@ -8,7 +8,7 @@ class Square extends Component {
     return(
       <>
         <div className="square"
-        onClick = {this.handleClick}>
+          onClick = {this.handleClick}>
           {this.props.value}
         </div>
       </>
