@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import Square from './components/Square'
+import Winner from './components/Winner'
+import PickPlayer from './components/PickPlayer'
 import './App.css'
 
 class App extends Component {
@@ -8,69 +10,83 @@ class App extends Component {
     this.state = {
       squares: [null, null, null, null, null, null, null, null, null],
       turn: true,
-      whoWon: null,
-          
+     
+      emojis: ["⭕️", "❌", "🐈‍⬛", "🐕", "🌭", "🍔" ],
+      emojiOrder: 0,
+      playerOne: null,
+      playerTwo: null          
     }
   }
-    
-    
-
-    handleGamePlay = (index, whoseTurn) => {
-      const {squares, turn} = this.state
+    componentDidMount() {
+      let {turnCount} = this.state
       
-      if (squares[index] !== null) {
+      this.setState({turnCount: turnCount + 1})
+    }
+    
+    playerCheck = (emojiIndex) => {
+        let {emojis, emojiOrder} = this.state
+        if (emojiOrder === 0){
+          this.setState({playerOne: emojis[emojiIndex], emojiOrder: emojiOrder + 1})
+        } else if (emojiOrder === 1) {
+          this.setState({playerTwo: emojis[emojiIndex], emojiOrder: emojiOrder + 1})
+        } else {
+          void(0)
+        }
+
+    }
+    handleGamePlay = (index) => {
+      const {squares, turn, playerOne, playerTwo} = this.state  
+      
+
+      if(playerOne === null || playerTwo === null) {
+        alert("Please pick players ")
+      } else if (squares[index] !== null) {
         void(0)
       } else if(turn === true) {
-        squares[index] = "⭕️"
-       
+        squares[index] = playerOne
         this.setState({squares: squares, turn: false})
       } else if(turn === false) {
-        squares[index] = "❌"
-        
+        squares[index] = playerTwo
         this.setState({squares: squares, turn: true})
-      }
+      } 
       
     }
 
-    winner (squareArr) {
-      
-      const lines = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6],
-      ];
-      let winner = null
-      for (let i = 0; i < lines.length; i++) {
-        const [a, b, c] = lines[i];
-        if (squareArr[a] && squareArr[a] === squareArr[b] && squareArr[a] === squareArr[c]) {
-          winner = squareArr[a] ;
+    restart = () => {
+      this.setState(
+        {
+          squares:[null, null, null, null, null, null, null, null, null],
+          turn: true,
+          
+          emojiOrder: 0,
+          playerOne: null,
+          playerTwo: null  
         }
-      }
-      this.setState({whoWon: winner}) 
+      )
     }
   
 
   render() {
-    console.log("square:", this.state.squares)
-    console.log("turn:", this.state.turn)
-    console.log("playA:", this.state.playA)
-    console.log("playB:", this.state.playB)
-    console.log("win:", this.state.whoWon)
-
-    
+    // console.log("square:", this.state.squares)
+    // console.log("turn:", this.state.turn)
+    // console.log("playA:", this.state.playA)
+    // console.log("playB:", this.state.playB)
+    // console.log("win:", this.state.whoWon)
+    console.log(this.state.turnCount)
 
     return(
       <>
         <h1>Tic Tac Toe</h1>
+        <div className = "playerId">
+          <div>P1 {this.state.playerOne}</div>
+          <div>P2 {this.state.playerTwo}</div>
+        </div>
+        <div>
+          <button onClick={this.restart}>
+            RESET
+          </button>
+        </div>
         <div className='game-board'> 
-
-        
-
         {this.state.squares.map((value, index) => {
           return (
             <Square 
@@ -79,13 +95,32 @@ class App extends Component {
             index = {index}
             handleGamePlay = {this.handleGamePlay}
             turn = {this.state.turn}
-            win = {this.winner}
+            turnCount = {this.state.turnCount}
             /> 
           )
         })}
         </div>
-        <div>
-          <p>{this.state.whoWon}</p>
+       
+        <div className = "players">
+            {this.state.emojis.map((value, index) => {
+              return (
+                <PickPlayer
+                playerCheck = {this.playerCheck}
+                key={index}
+                emojis = {value}
+                index={index}
+                />
+              )
+            })}
+            
+        </div>
+        
+        <div className = "winnerBox">
+          <div className = "winner">
+            <Winner
+            squares={this.state.squares}
+            />
+          </div> 
         </div>
       </>
     )
