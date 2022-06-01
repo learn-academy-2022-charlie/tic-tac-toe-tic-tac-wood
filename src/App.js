@@ -14,14 +14,40 @@ class App extends Component {
       emojis: ["⭕️", "❌", "🐈‍⬛", "🐕", "🌭", "🍔" ],
       emojiOrder: 0,
       playerOne: null,
-      playerTwo: null          
+      playerTwo: null,
+      gameEnd: false,
+      winner: null,          
     }
   }
-    componentDidMount() {
-      let {turnCount} = this.state
+ 
+  winCheck = (squareArr) => {
       
-      this.setState({turnCount: turnCount + 1})
+    const lines = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8],
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8],
+      [0, 4, 8],
+      [2, 4, 6],
+    ];
+    let {winner, gameEnd}=this.state
+    for (let i = 0; i < lines.length; i++) {
+      const [a, b, c] = lines[i];
+      if (squareArr[a] && squareArr[a] === squareArr[b] && squareArr[a] === squareArr[c]) {
+           winner = `${squareArr[a]} is the winner!`
+           gameEnd = true
+      } else if(squareArr.indexOf(null) === -1) {
+           winner = "Stalemate!"
+           gameEnd = true
+        
+      }
+        
     }
+    return winner
+  }
+  
     
     playerCheck = (emojiIndex) => {
         let {emojis, emojiOrder} = this.state
@@ -34,9 +60,13 @@ class App extends Component {
         }
 
     }
+    
     handleGamePlay = (index) => {
-      const {squares, turn, playerOne, playerTwo} = this.state  
+      const {squares, turn, playerOne, playerTwo, gameEnd} = this.state  
       
+      if (gameEnd === true){
+        alert("Please reset the game!")
+      }
 
       if(playerOne === null || playerTwo === null) {
         alert("Please pick players ")
@@ -67,7 +97,7 @@ class App extends Component {
   
 
   render() {
-    // console.log("square:", this.state.squares)
+    console.log("square:", this.state.squares)
     // console.log("turn:", this.state.turn)
     // console.log("playA:", this.state.playA)
     // console.log("playB:", this.state.playB)
@@ -117,9 +147,12 @@ class App extends Component {
         
         <div className = "winnerBox">
           <div className = "winner">
-            <Winner
+            {/* <Winner
             squares={this.state.squares}
-            />
+            winChecker = {this.winCheck}
+            winner= {this.state.winner}
+            /> */}
+            {this.winCheck(this.state.squares)}
           </div> 
         </div>
       </>
